@@ -35,6 +35,7 @@ Campus Connect offers the following functionalities:
 
 5. **Admin Panel:**
   - System administrators can review and approve club registration requests.
+  - Admin Manages all Clubs, Events.
 
 6. **Email Notifications:**
   - Club administrators receive email notifications upon registration approval or rejection.
