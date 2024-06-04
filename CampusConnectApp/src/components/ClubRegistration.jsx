@@ -10,7 +10,7 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { LoadAllClubs, Loadallunacceptedclub, createClub, uploadlogo } from "../services/club-service";
+import { Loadallunacceptedclub, createClub, uploadlogo } from "../services/club-service";
 import { useNavigate } from "react-router-dom";
 
 const ClubRegistration = () => {

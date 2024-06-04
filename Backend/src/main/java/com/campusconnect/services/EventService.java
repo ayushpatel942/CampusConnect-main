@@ -22,4 +22,6 @@ public interface EventService {
     public List<Event> getUpcomingEvent();
 
     public Event getEventbyId(Long eventId);
+
+    public Event addStudent(String studentEmail,Long eventId);
 }

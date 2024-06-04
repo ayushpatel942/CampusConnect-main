@@ -15,7 +15,7 @@ export const LoadAllClubs = () => {
 export const LoadClubById = (clubId) => {
   console.log(clubId);
   return myAxios.get(`/api/club/${clubId}`).then((response) => {
-    console.log("loadclubbyid -- ", response.data);
+    console.log(response.data);
     return response.data;
   });
 };
@@ -61,6 +61,16 @@ export const uploadlogo = (image, clubId) => {
 
 export const FilterByDept = (dept) => {
   return myAxios.get("/api/club/filter/" + dept).then((response) => {
+    return response.data;
+  });
+};
+
+export const UpdateClubDetails = (club, clubId) => {
+  return myAxios.put("/api/club/updateclub/" + clubId, club);
+};
+
+export const DeleteClub = (clubId) => {
+  return myAxios.delete("/api/club/deleteClub/" + clubId).then((response) => {
     return response.data;
   });
 };

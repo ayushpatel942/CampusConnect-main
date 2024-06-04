@@ -5,7 +5,9 @@ import com.campusconnect.entities.Admin;
 import com.campusconnect.entities.Club;
 import com.campusconnect.entities.Mail;
 import com.campusconnect.repositories.AdminRepo;
+import com.campusconnect.repositories.ClubRepo;
 import com.campusconnect.services.AdminService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.Setter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,6 +25,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Autowired
     private AdminRepo adminRepo;
+
+    @Autowired
+    private ClubRepo clubRepo;
 
     @Autowired
     @Qualifier("modelMapper")
@@ -65,26 +71,54 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<Admin> getClubEmails() {
+    public List<Admin> getClubIds() {
         List<Admin> adminList = adminRepo.getAllAdmin();
         return adminList;
     }
 
+//    @Override
+//    public AdminDto changeStatus(Long clubId,String status) {
+////        System.out.println(clubEmail);
+//        Admin admin = adminRepo.findAdminByClubId(clubId);
+//
+//
+//        admin.setClubStatus(status);
+//
+//        if(status.equals("rejected"))
+//        {
+//            adminRepo.deleteByClubId(clubId);
+//            clubRepo.deleteById(clubId);
+//        }
+//
+//        adminRepo.save(admin);
+//
+//        return model.map(admin,AdminDto.class);
+//    }
+
+    @Transactional
     @Override
-    public AdminDto changeStatus(String clubEmail,String status) {
-        System.out.println(clubEmail);
-        Admin admin = adminRepo.findAdminByClubEmail(clubEmail);
+    public AdminDto changeStatus(Long clubId, String status) {
+        Admin admin = adminRepo.findAdminByClubId(clubId);
+
+        if (admin == null) {
+            throw new EntityNotFoundException("Admin not found with clubId: " + clubId);
+        }
 
         admin.setClubStatus(status);
 
-        adminRepo.save(admin);
+        if ("rejected".equals(status)) {
+            adminRepo.deleteByClubId(clubId);
+            clubRepo.deleteById(clubId);
+        } else {
+            adminRepo.save(admin);
+        }
 
-        return model.map(admin,AdminDto.class);
+        return model.map(admin, AdminDto.class);
     }
 
     @Override
-    public String checkStatus(String clubEmail) {
+    public String checkStatus(Long clubId) {
 
-        return adminRepo.findAdminByClubEmail(clubEmail).getClubStatus();
+        return adminRepo.findAdminByClubId(clubId).getClubStatus();
     }
 }

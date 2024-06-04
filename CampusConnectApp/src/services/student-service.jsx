@@ -1,3 +1,4 @@
+import { m } from "framer-motion";
 import { myAxios } from "./helper";
 
 export const SignUpFunc = (student) => {
@@ -28,3 +29,7 @@ export const getStudetnIdByStudentEmail = (email, password) => {
       return response.data;
     });
 };
+
+export const ParticipantEvent = (studentId,evenId) => {
+  return myAxios.put("/api/student/participantEvent/"+studentId+"/"+evenId);
+}

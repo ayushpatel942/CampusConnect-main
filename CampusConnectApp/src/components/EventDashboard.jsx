@@ -1,26 +1,35 @@
 import React, { useEffect, useState } from "react";
-import { DeleteEventById, loadEventById } from "../services/event-service";
+import {
+  AddStudent,
+  DeleteEventById,
+  loadEventById,
+} from "../services/event-service";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { BASE_URL } from "../services/helper";
 import { getClubByClubEmail } from "../services/club-service";
 import Base from "./Base";
-import { Box, Button, Card, Center, Image, Text } from "@chakra-ui/react";
+import { Box, Button, Card, Center, Flex, Image, Text } from "@chakra-ui/react";
+import { ParticipantEvent } from "../services/student-service";
 
 const EventDashboard = () => {
   const { eventId } = useParams();
   const [event, setEvent] = useState(null);
   const [isEventPast, setIsEventPast] = useState(false);
   const [check, setCheck] = useState(false);
+  const [studentCheck, setStudentCheck] = useState(false);
   const navigate = useNavigate();
 
+  const user = JSON.parse(localStorage.getItem("loggedInUser"));
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("loggedInUser"));
-
+    console.log(user);
     loadEventById(eventId)
       .then((data) => {
+        console.log(data);
         setEvent(data);
-        if (user) {
+        if (user.email === "admin") {
+          setCheck(true);
+        } else if (user) {
           getClubByClubEmail(user.email, user.password)
             .then((response) => {
               if (response.clubId === data.club.clubId) {
@@ -30,6 +39,13 @@ const EventDashboard = () => {
             .catch((error) => {
               console.log(error);
             });
+          for (let student of data.studentList) {
+            if (student.studentEmail === user.email) {
+              console.log("email");
+              setStudentCheck(true);
+              break; // Exit loop after finding a match
+            }
+          }
         }
         const eventDate = new Date(data.eventDate);
         const currentDate = new Date();
@@ -46,6 +62,28 @@ const EventDashboard = () => {
       .then(() => {
         toast.success("Event Deleted Successfully!!");
         navigate("/");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleRegister = (studentEmail, Id) => {
+    AddStudent(studentEmail, Id)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setStudentCheck(true);
+    setEvent(event);
+  };
+
+  const handleAccept = (studentId, evenId) => {
+    ParticipantEvent(studentId, evenId)
+      .then((response) => {
+        console.log(response);
       })
       .catch((error) => {
         console.log(error);
@@ -106,24 +144,32 @@ const EventDashboard = () => {
               <Text>
                 <strong>Club : </strong> {event?.club.clubName}
               </Text>
+              <Text>
+                <strong>No of Student Registered : </strong>{" "}
+                {event?.studentList.length}
+              </Text>
 
               {isEventPast ? (
                 <b>
                   You are past the Registration Date. Registration is closed.
                 </b>
-              ) : localStorage.getItem("loggedInUser") ? (
-                event ? (
-                  <Link
+              ) : user ? (
+                user.role === "student" &&
+                (studentCheck ? (
+                  <Text>Registered</Text>
+                ) : (
+                  <Button
                     mt="auto"
-                    to={event.eventLink}
+                    onClick={() => handleRegister(user.email, eventId)}
+                    // to={event.eventLink}
                     className="btn btn-primary"
                   >
                     Register
-                  </Link>
-                ) : null
+                  </Button>
+                ))
               ) : (
                 <Link mt="auto" className="btn btn-danger" to={"/login"}>
-                  Login to Register for Event
+                  Login as Student for register in event
                 </Link>
               )}
               {check && (
@@ -153,6 +199,43 @@ const EventDashboard = () => {
           </Box>
         </Card>
       </Box>
+      {check && (
+        <Flex direction="column" flex="1" p="4">
+          <Center>
+            <Box p={4} width="70%">
+              {event &&
+                event.studentList &&
+                event.studentList
+                  // .filter((student) => {
+                  //   // console.log(student.evenIds.includes(eventId));
+                  //   !student.eventIds.includes(eventId);
+                  // })
+                  .map((student) => (
+                    !student.eventIds.includes(Number(eventId)) ? (
+                      <Box
+                        borderWidth="5px"
+                        key={student.studentId}
+                        borderRadius="lg"
+                        overflow="hidden"
+                      >
+                        {student.studentName}
+                        <Button
+                          mt="auto"
+                          className="btn btn-primary"
+                          colorScheme="blue"
+                          onClick={() =>
+                            handleAccept(student.studentId, eventId)
+                          }
+                        >
+                          Accept
+                        </Button>
+                      </Box>
+                    ) : null
+                  ))}
+            </Box>
+          </Center>
+        </Flex>
+      )}
     </Base>
   );
 };

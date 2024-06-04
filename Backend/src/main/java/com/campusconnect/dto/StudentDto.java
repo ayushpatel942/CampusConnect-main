@@ -24,5 +24,7 @@ public class StudentDto {
 
     private String studentDept;
 
+    private List<Long> eventIds;
+
     private List<Event> eventList;
 }

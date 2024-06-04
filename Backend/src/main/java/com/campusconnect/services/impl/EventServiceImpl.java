@@ -1,10 +1,13 @@
 package com.campusconnect.services.impl;
 
 import com.campusconnect.dto.EventDto;
+import com.campusconnect.dto.StudentDto;
 import com.campusconnect.entities.Club;
 import com.campusconnect.entities.Event;
+import com.campusconnect.entities.Student;
 import com.campusconnect.repositories.ClubRepo;
 import com.campusconnect.repositories.EventRepo;
+import com.campusconnect.repositories.StudentRepo;
 import com.campusconnect.services.EventService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,9 @@ public class EventServiceImpl implements EventService {
 
     @Autowired
     private EventRepo eventRepo;
+
+    @Autowired
+    private StudentRepo studentRepo;
 
     @Autowired
     private ClubRepo clubRepo;
@@ -92,6 +98,26 @@ public class EventServiceImpl implements EventService {
     public Event getEventbyId(Long eventId) {
         Event event = this.eventRepo.findById(eventId).orElseThrow();
 //        System.out.println(event.getClub().getClubId());
+        return event;
+    }
+
+    @Override
+    public Event addStudent(String studentEmail, Long eventId) {
+        Event event = eventRepo.findById(eventId).orElseThrow();
+
+        Student student = studentRepo.findStudentByStudentEmail(studentEmail);
+
+        List<Student> studentList = event.getStudent();
+        studentList.add(student);
+        event.setStudent(studentList);
+
+        List<Event> eventList = student.getEventList();
+        eventList.add(event);
+        student.setEventList(eventList);
+
+        eventRepo.save(event);
+        studentRepo.save(student);
+
         return event;
     }
 }

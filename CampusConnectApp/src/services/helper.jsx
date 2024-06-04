@@ -7,5 +7,6 @@ export const myAxios = axios.create({
 });
 
 export const doLogin = (data) => {
+    console.log(data);
     localStorage.setItem("loggedInUser",JSON.stringify(data));
 };

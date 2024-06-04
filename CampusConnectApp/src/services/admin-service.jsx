@@ -1,8 +1,8 @@
 import { myAxios } from "./helper";
 
-export const ChangeClubStatus = (clubEmail,status) => {
-  console.log(clubEmail);
-  return myAxios.put(`/api/admin/changeStatus/${clubEmail}/${status}`);
+export const ChangeClubStatus = (clubId,status) => {
+  // console.log(clubEmail);
+  return myAxios.put(`/api/admin/changeStatus/${clubId}/${status}`);
 };
 
 export const LoadPendingClubs = () => {
@@ -11,8 +11,8 @@ export const LoadPendingClubs = () => {
   });
 };
 
-export const CheckClubStatus = (clubEmail) => {
-  return myAxios.get(`/api/admin/checkStatus/${clubEmail}`).then((response) => {
+export const CheckClubStatus = (clubId) => {
+  return myAxios.get(`/api/admin/checkStatus/${clubId}`).then((response) => {
     return response.data;
   });
 };

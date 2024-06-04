@@ -55,8 +55,11 @@ export const uploadImage = (image, eventId) => {
 };
 
 export const SearchPost = (query) => {
-  const url = `/api/search/${query}`;
   return myAxios.get("api/event/search/" + query).then((response) => {
     return response.data;
   });
 };
+
+export const AddStudent = (studentEmail,eventId) => {
+  return myAxios.put("/api/event/addStudent/"+studentEmail+"/"+eventId)
+} 

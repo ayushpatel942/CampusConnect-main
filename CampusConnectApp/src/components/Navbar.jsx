@@ -16,7 +16,7 @@ import {
   DrawerCloseButton,
   DrawerBody,
 } from "@chakra-ui/react";
-import { useState } from "react";;
+import { useState } from "react";
 import { NavLink as ReactLink, useNavigate } from "react-router-dom";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { getStudetnIdByStudentEmail } from "../services/student-service";
@@ -26,14 +26,15 @@ const Navbar = () => {
   const [isLargerThan1023, isLargerThan768] = useMediaQuery(
     "(min-width: 1024px), (min-width: 768px)"
   );
+  const user = JSON.parse(localStorage.getItem("loggedInUser"));
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleToggle = () => setIsOpen(!isOpen);
 
   const handleProfile = () => {
-    const user = JSON.parse(localStorage.getItem("loggedInUser"));
     console.log(user.email);
+
     if (user.role === "student") {
       getStudetnIdByStudentEmail(user.email, user.password)
         .then((response) => {
@@ -57,9 +58,14 @@ const Navbar = () => {
     }
   };
 
+  // const handleLogout = () => {
+  //   localStorage.removeItem("loggedInUser");
+  //   navigate("/");
+  // };
+
   const handleLogout = () => {
     localStorage.removeItem("loggedInUser");
-    navigate("/");
+    window.location.href = "/";
   };
 
   return (
@@ -95,7 +101,7 @@ const Navbar = () => {
             fontSize="xl"
             fontWeight="extrabold"
           >
-            Club Hub
+            Campus Connect
           </Link>
         </Box>
         {isLargerThan1023 && (
@@ -141,6 +147,25 @@ const Navbar = () => {
                 >
                   Clubs
                 </Link>
+                {JSON.parse(localStorage.getItem("loggedInUser")) &&
+                JSON.parse(localStorage.getItem("loggedInUser")).email ===
+                  "admin" ? (
+                  <Link
+                    _hover={{ textDecoration: "none" }}
+                    style={{
+                      textDecoration: "none",
+                      fontSize: isLargerThan768 ? "md" : "sm",
+                    }}
+                    as={ReactLink}
+                    to="/admin"
+                    fontWeight="semibold"
+                    mr={50}
+                  >
+                    Pending Club request
+                  </Link>
+                ) : (
+                  <></>
+                )}
 
                 <Box ml={4}>
                   <Menu>
@@ -170,17 +195,20 @@ const Navbar = () => {
                       </MenuList>
                     ) : (
                       <MenuList>
-                        <Link
-                          _hover={{ textDecoration: "none" }}
-                          style={{ textDecoration: "none" }}
-                          as={ReactLink}
-                          onClick={handleProfile}
-                          ml={2}
-                        >
-                          Profile
-                        </Link>
-                        <MenuDivider />
-
+                        {user.email !== "admin" && (
+                          <>
+                            <Link
+                              _hover={{ textDecoration: "none" }}
+                              style={{ textDecoration: "none" }}
+                              as={ReactLink}
+                              onClick={handleProfile}
+                              ml={2}
+                            >
+                              Profile
+                            </Link>
+                            <MenuDivider />
+                          </>
+                        )}
                         <Link
                           _hover={{ textDecoration: "none" }}
                           style={{ textDecoration: "none" }}
@@ -240,6 +268,25 @@ const Navbar = () => {
                   >
                     Clubs
                   </Link>
+                  {JSON.parse(localStorage.getItem("loggedInUser")) &&
+                  JSON.parse(localStorage.getItem("loggedInUser")).email ===
+                    "admin" ? (
+                    <Link
+                      _hover={{ textDecoration: "none" }}
+                      style={{
+                        textDecoration: "none",
+                        fontSize: isLargerThan768 ? "md" : "sm",
+                      }}
+                      as={ReactLink}
+                      to="/admin"
+                      fontWeight="semibold"
+                      mr={50}
+                    >
+                      Pending Club request
+                    </Link>
+                  ) : (
+                    <></>
+                  )}
                   <br />
 
                   {localStorage.getItem("loggedInUser") === null ? (

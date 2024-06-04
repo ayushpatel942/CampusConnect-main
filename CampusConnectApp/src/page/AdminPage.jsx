@@ -16,30 +16,40 @@ import {
   SendMail,
 } from "../services/admin-service";
 import { BASE_URL } from "../services/helper";
+import { useNavigate } from "react-router-dom";
+import Base from "../components/Base";
 
 export const AdminPage = () => {
+  const [check,setCheck] = useState(false);
   const [clubs, setClubs] = useState([]);
   const [mailData, setMailData] = useState({
     subject: "About your Club request.",
     message: "",
   });
 
+  const navigate = useNavigate();
+
   const [reject, setReject] = useState("");
 
   useEffect(() => {
+    if(JSON.parse(localStorage.getItem("loggedInUser")).email!=="admin")
+    {
+      navigate("/");
+    }
     LoadPendingClubs()
-      .then((response) => {
-        console.log(response);
-        setClubs([...response]);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    .then((response) => {
+      console.log(response);
+      setClubs([...response]);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+    console.log(localStorage.getItem("loggedInUser"));
   }, []);
 
-  const handleAccept = (Email, clubName) => {
-    console.log(Email);
-    ChangeClubStatus(Email, "accepted").then(() => {
+  const handleAccept = (clubId, clubName, clubEmail) => {
+    // console.log(Email);
+    ChangeClubStatus(clubId, "accepted").then(() => {
       console.log("accepted!!");
 
       LoadPendingClubs()
@@ -54,7 +64,7 @@ export const AdminPage = () => {
         "We are thrilled to inform you that your club " +
         clubName +
         " registration has been accepted! 🥳 On behalf of Campus Connect, we extend our warmest congratulations and welcome you to our community of clubs";
-      SendMail(Email, mailData)
+      SendMail(clubEmail, mailData)
         .then(() => {
           console.log("mail send");
         })
@@ -64,10 +74,10 @@ export const AdminPage = () => {
     });
   };
 
-  const handleReject = (Email, clubName) => {
+  const handleReject = (clubId, clubEmail) => {
     console.log(mailData);
 
-    ChangeClubStatus(Email, "rejected")
+    ChangeClubStatus(clubId, "rejected")
       .then(() => {
         console.log("rejectd!!");
         LoadPendingClubs()
@@ -77,7 +87,7 @@ export const AdminPage = () => {
           .catch((error) => {
             console.log(error);
           });
-        SendMail(Email, mailData);
+        SendMail(clubEmail, mailData);
       })
       .catch((error) => {
         console.log(error);
@@ -93,7 +103,7 @@ export const AdminPage = () => {
   };
 
   return (
-    <div>
+    <Base>
       <Text as="h2" m={4}>
         Pending requests..
       </Text>
@@ -120,7 +130,7 @@ export const AdminPage = () => {
                   variant="solid"
                   colorScheme="blue"
                   onClick={() => {
-                    handleAccept(club.clubEmail, club.clubName);
+                    handleAccept(club.clubId, club.clubName, club.clubEmail);
                   }}
                   mr={1}
                 >
@@ -147,7 +157,7 @@ export const AdminPage = () => {
                   <Button
                     variant="solid"
                     colorScheme="blue"
-                    onClick={() => handleReject(club.clubEmail, club.clubName)}
+                    onClick={() => handleReject(club.clubId, club.clubEmail)}
                     m={1}
                   >
                     Submit FeedBack
@@ -157,6 +167,6 @@ export const AdminPage = () => {
             </Card>
           </>
         ))}
-    </div>
+    </Base>
   );
 };

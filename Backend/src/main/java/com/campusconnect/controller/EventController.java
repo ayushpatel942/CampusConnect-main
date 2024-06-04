@@ -165,4 +165,11 @@ public class EventController
 
         return new ResponseEntity<List<Event>>(eventList, HttpStatus.OK);
     }
+
+    @PutMapping("/addStudent/{studentEmail}/{eventId}")
+    public ResponseEntity<EventDto> addStudent(@PathVariable("studentEmail") String studentEmail,@PathVariable("eventId") Long eventId)
+    {
+        Event event = eventService.addStudent(studentEmail,eventId);
+        return new ResponseEntity<EventDto>(modelMapper.map(event,EventDto.class),HttpStatus.OK);
+    }
 }

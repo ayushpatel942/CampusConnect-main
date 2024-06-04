@@ -5,6 +5,7 @@ import com.campusconnect.dto.ClubDto;
 import com.campusconnect.dto.StudentDto;
 import com.campusconnect.entities.Club;
 import com.campusconnect.entities.Student;
+import com.campusconnect.repositories.AdminRepo;
 import com.campusconnect.repositories.ClubRepo;
 import com.campusconnect.services.ClubService;
 import org.modelmapper.ModelMapper;
@@ -22,6 +23,9 @@ public class ClubServiceImpl implements ClubService {
     private ClubRepo clubRepo;
 
     @Autowired
+    private AdminRepo adminRepo;
+
+    @Autowired
     @Qualifier("modelMapper")
     private ModelMapper model;
 
@@ -34,14 +38,16 @@ public class ClubServiceImpl implements ClubService {
 
     @Override
     public ClubDto updateClub(ClubDto clubDto,Long clubId) {
+        System.out.println("hello "+clubId);
         Club club = this.clubRepo.findById(clubId).orElseThrow();
-        club.setDept(clubDto.getDept());
-        club.setMentor(clubDto.getMentor());
-        club.setLogo(clubDto.getLogo());
-        club.setClubName(clubDto.getClubName());
-        club.setDescription(clubDto.getDescription());
-        club.setPresident(clubDto.getPresident());
+        club.setDept(clubDto.getDept() == null ? club.getDept() : clubDto.getDept());
+        club.setMentor(clubDto.getMentor() == null ? club.getMentor() : clubDto.getMentor());
+        club.setClubName(clubDto.getClubName() == null ? club.getClubName() : clubDto.getClubName());
+        club.setPresident(clubDto.getPresident() == null ? club.getPresident() : clubDto.getPresident());
+        club.setDescription(clubDto.getDescription() == null ? club.getDescription() : clubDto.getDescription());
+        club.setClubEmail(clubDto.getClubEmail() == null ? club.getClubEmail() : clubDto.getClubEmail());
         Club club1 = this.clubRepo.save(club);
+        System.out.println(club1.getClubEmail());
         return this.model.map(club1,ClubDto.class);
     }
 
@@ -49,7 +55,7 @@ public class ClubServiceImpl implements ClubService {
     public void deleteClub(Long clubId) {
         this.clubRepo.findById(clubId)
                 .orElseThrow();
-
+        this.adminRepo.deleteByClubId(clubId);
         this.clubRepo.deleteById(clubId);
     }
 
@@ -66,7 +72,10 @@ public class ClubServiceImpl implements ClubService {
 
     @Override
     public ClubDto loginClub(String username, String password) {
+        System.out.println(username);
         Club club = clubRepo.findClubByClubEmailAndClubPassword(username,password);
+        System.out.println(club);
+
         return model.map(club,ClubDto.class);
     }
 

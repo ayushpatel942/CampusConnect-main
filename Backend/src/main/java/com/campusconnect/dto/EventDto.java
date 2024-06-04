@@ -1,6 +1,7 @@
 package com.campusconnect.dto;
 
 import com.campusconnect.entities.Club;
+import com.campusconnect.entities.Student;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.sql.Time;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -32,5 +34,7 @@ public class EventDto
 
     private String eventLink;
 
-    private ClubDto club    ;
+    private ClubDto club;
+
+    private List<Student> studentList;
 }

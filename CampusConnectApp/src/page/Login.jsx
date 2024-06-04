@@ -29,10 +29,11 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log(localStorage.getItem("loggedInUser"));
     if (localStorage.getItem("loggedInUser") !== null) {
       navigate("/");
     }
-  });
+  },[]);
 
   const handleChange = (event) => {
     setData({ ...data, [event.target.name]: event.target.value });
@@ -41,8 +42,9 @@ const Login = () => {
   const handleLogin = () => {
     if (data.role === "select--") {
       if (data.email === "admin" && data.password === "admin") {
-        console.log("admin");
-        navigate("/admin");
+        // console.log("admin");
+        doLogin(data);
+        navigate("/");
       }
     }
 

@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class StudentServiceImpl implements StudentService {
 
@@ -58,6 +61,28 @@ public class StudentServiceImpl implements StudentService {
     public StudentDto getStudentIdByEmailAndPassword(String username,String password) {
 
         Student student = studentRepo.findStudentByStudentEmailAndStudentPassword(username,password);
+        return model.map(student,StudentDto.class);
+    }
+
+    @Override
+    public StudentDto participantEvent(Long studentId, Long eventId) {
+
+        System.out.println(studentId);
+
+        Student student = studentRepo.findById(studentId).orElseThrow();
+
+        if (student.getEventIds() == null) {
+            student.setEventIds(new ArrayList<>());
+        }
+
+        List<Long> eventIds = student.getEventIds();
+
+
+        eventIds.add(eventId);
+
+        student.setEventIds(eventIds);
+
+        studentRepo.save(student);
         return model.map(student,StudentDto.class);
     }
 }

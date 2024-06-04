@@ -57,4 +57,12 @@ public class StudentController {
 
         return new ResponseEntity<StudentDto>(studentDto,HttpStatus.OK);
     }
+
+    @PutMapping("/participantEvent/{studentId}/{eventId}")
+    public ResponseEntity<StudentDto> participentEvent(@PathVariable("studentId") Long studentId,@PathVariable("eventId") Long eventId)
+    {
+        System.out.println(studentId);
+        StudentDto studentDto = studentService.participantEvent(studentId,eventId);
+        return new ResponseEntity<StudentDto>(studentDto,HttpStatus.OK);
+    }
 }

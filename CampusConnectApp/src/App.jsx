@@ -13,6 +13,7 @@ import { AdminPage } from "./page/AdminPage";
 import StudentProfile from "./page/StudentProfile";
 import { EditEvent } from "./page/EditEvent";
 import Event from "./page/Event";
+import { UpdateClub } from "./page/UpdateClub";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/studentProfile/:studentId" element={<StudentProfile />} />
         <Route path="/editEvent/:eventId" element={<EditEvent />} />
+        <Route path="/updateClub/:clubId" element={<UpdateClub />} />
       </Routes>
     </BrowserRouter>
   );

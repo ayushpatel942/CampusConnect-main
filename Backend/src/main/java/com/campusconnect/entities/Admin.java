@@ -16,20 +16,8 @@ public class Admin {
     @Column(name = "Admin_Id")
     private Long Id;
 
-    @Column(name = "Admin_name")
-    private String Name;
-
-    @Column(name = "Admin_Email")
-    private String Email;
-
-    @Column(name = "Admin_Username")
-    private String Username;
-
-    @Column(name = "Admin_Password")
-    private String Password;
-
-    @Column(name = "Club_Email")
-    private String clubEmail;
+    @Column(name = "Club_Id")
+    private Long clubId;
 
     @Column
     private String clubStatus;

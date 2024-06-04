@@ -12,7 +12,6 @@ import {
   Input,
   Textarea,
 } from "@chakra-ui/react";
-import { Button } from "antd";
 import { UpdateEvent, loadEventById } from "../services/event-service";
 import { Link, useParams } from "react-router-dom";
 
@@ -31,7 +30,8 @@ export const EditEvent = () => {
 
         if (
           response.club.clubEmail ===
-          JSON.parse(localStorage.getItem("loggedInUser")).email
+          JSON.parse(localStorage.getItem("loggedInUser")).email ||
+          JSON.parse(localStorage.getItem("loggedInUser")).email === "admin"
         ) {
           setCheck(true);
         }

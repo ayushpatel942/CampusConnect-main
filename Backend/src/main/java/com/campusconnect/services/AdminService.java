@@ -14,9 +14,9 @@ public interface AdminService {
     public AdminDto updateAdmin(AdminDto admindto);
     public AdminDto deleteAdmin(AdminDto admindto);
 
-    public List<Admin> getClubEmails();
+    public List<Admin> getClubIds();
 
-    public AdminDto changeStatus(String clubEmail,String status);
+    public AdminDto changeStatus(Long clubId,String status);
 
-    public String checkStatus(String clubEmail);
+    public String checkStatus(Long clubId);
 }

@@ -12,31 +12,35 @@ import {
   Card,
   Table,
   Button,
+  cookieStorageManager,
+  Flex,
+  Center,
 } from "@chakra-ui/react";
 // import { Card, Table } from "antd";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { LoadStudentById } from "../services/student-service";
 
 const StudentProfile = () => {
-  const [profileData, setProfileData] = useState(null);
+  const [student, setStudent] = useState(null);
   const location = useLocation();
   const { studentId } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (localStorage.getItem("loggedInUser") === null) {
+      console.log("student");
       navigate("/login");
       return;
     }
     LoadStudentById(studentId)
       .then((response) => {
-        setProfileData(response);
+        console.log(response);
+        setStudent(response);
       })
       .catch((error) => {
         console.log(error);
       });
   }, []);
-
 
   return (
     <Base>
@@ -45,30 +49,30 @@ const StudentProfile = () => {
           <Box textAlign="center">
             <Heading>User Profile Details</Heading>
           </Box>
-          {profileData && (
+          {student && (
             <Card>
               <CardBody>
                 <Table variant="striped" borderWidth="1px" borderRadius="md">
                   <Tbody>
                     <Tr>
                       <Td>NAME</Td>
-                      <Td>{profileData.studentName}</Td>
+                      <Td>{student.studentName}</Td>
                     </Tr>
                     <Tr>
                       <Td>USERNAME</Td>
-                      <Td>{profileData.studentUsername}</Td>
+                      <Td>{student.studentUsername}</Td>
                     </Tr>
                     <Tr>
                       <Td>Email</Td>
-                      <Td>{profileData.studentEmail}</Td>
+                      <Td>{student.studentEmail}</Td>
                     </Tr>
                     <Tr>
                       <Td>SEMESTER</Td>
-                      <Td>{profileData.studentSem}</Td>
+                      <Td>{student.studentSem}</Td>
                     </Tr>
                     <Tr>
                       <Td>DEPARTMENT</Td>
-                      <Td>{profileData.studentDept}</Td>
+                      <Td>{student.studentDept}</Td>
                     </Tr>
                   </Tbody>
                 </Table>
@@ -76,6 +80,27 @@ const StudentProfile = () => {
             </Card>
           )}
         </Container>
+        
+        {/* {student && ( */}
+              <Heading >Events</Heading>
+          <Flex direction="column" flex="1" p="4">
+            <Center>
+              <Box p={4} width="70%">
+                {student &&
+                student.eventList &&
+                student.eventList.map((event) => (
+                <Box
+                  borderWidth="5px"
+                  key={event.eventId}
+                  borderRadius="lg"
+                  overflow="hidden"
+                >
+                  {event.eventName}
+                </Box>
+                ))} 
+              </Box>
+            </Center>
+          </Flex>
       </Box>
     </Base>
   );

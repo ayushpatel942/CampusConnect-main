@@ -11,5 +11,7 @@ public interface AdminRepo extends JpaRepository<Admin, Long> {
     @Query("SELECT a FROM Admin a")
     public List<Admin> getAllAdmin();
 
-    public Admin findAdminByClubEmail(String clubEmail);
+    public Admin findAdminByClubId(Long clubId);
+
+    public void deleteByClubId(Long clubId);
 }

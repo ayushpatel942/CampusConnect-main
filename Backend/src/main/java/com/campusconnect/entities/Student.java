@@ -38,6 +38,11 @@ public class Student {
 
     @Column(name = "Department")
     private String studentDept;
+
+    @Column
+    @ElementCollection
+    private List<Long> eventIds;
+
     @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
     private List<Event> eventList;

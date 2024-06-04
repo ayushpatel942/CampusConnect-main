@@ -14,4 +14,6 @@ public interface StudentService {
     public StudentDto loginStudent(String email,String password);
 
     public StudentDto getStudentIdByEmailAndPassword(String username,String password);
+
+    public StudentDto participantEvent(Long studentId,Long eventId);
 }

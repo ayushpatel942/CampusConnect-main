@@ -1,29 +1,28 @@
 import React, { useEffect, useState } from "react";
 import Base from "../components/Base";
 import { Box, Center, Image, Flex, Card, Text, Button } from "@chakra-ui/react";
-import { LoadClubById } from "../services/club-service";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { DeleteClub, LoadClubById } from "../services/club-service";
+import { useNavigate, useParams } from "react-router-dom";
 import { BASE_URL } from "../services/helper";
 import { CheckClubStatus } from "../services/admin-service";
 import { EventCard } from "../components/EventCard";
 
 const ClubDetails = () => {
-  const location = useLocation();
   const [club, setClub] = useState({});
   const { clubId } = useParams();
   const navigate = useNavigate();
-  const [check, setCheck] = useState(true);
+  const [check, setCheck] = useState(false);
 
   useEffect(() => {
-    console.log(clubId);
+    console.log(localStorage.getItem("loggedInUser"));
     LoadClubById(clubId)
       .then((response) => {
-        CheckClubStatus(response.clubEmail).then((res) => {
+        CheckClubStatus(response.clubId).then((res) => {
           console.log("checkCLubStatus", res);
 
-          if (res === "pending") {
-            setCheck(false);
-            localStorage.removeItem("loggedInUser");
+          if (res === "accepted") {
+            setCheck(true);
+            // localStorage.removeItem("loggedInUser");
           }
         });
         console.log("then ", response);
@@ -37,6 +36,20 @@ const ClubDetails = () => {
   const handleCreate = (clubId) => {
     navigate("/eventRegistry/" + clubId);
   };
+
+  const handleUpdate = (clubId) => {
+    navigate("/updateClub/" + clubId);
+  };
+
+  const handleDelete = (clubId) => {
+    DeleteClub(clubId).then(() => {
+      navigate("/");
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+    navigate("/")
+  }
 
   return (
     <Base>
@@ -67,8 +80,10 @@ const ClubDetails = () => {
                 {club.description}
               </Text>
               {localStorage.getItem("loggedInUser") &&
-                JSON.parse(localStorage.getItem("loggedInUser")).email ===
-                  club.clubEmail && (
+                (JSON.parse(localStorage.getItem("loggedInUser")).email ===
+                  club.clubEmail ||
+                  JSON.parse(localStorage.getItem("loggedInUser")).email ===
+                    "admin") && (
                   <>
                     <Button
                       m="3"
@@ -79,6 +94,29 @@ const ClubDetails = () => {
                     >
                       Create New Event
                     </Button>
+                    <Button
+                      m="3"
+                      width="20%"
+                      variant="solid"
+                      colorScheme="blue"
+                      onClick={() => handleUpdate(club.clubId)}
+                    >
+                      Update
+                    </Button>
+                    {JSON.parse(localStorage.getItem("loggedInUser")).email ===
+                    "admin" ? (
+                      <Button
+                        m="3"
+                        width="20%"
+                        variant="solid"
+                        colorScheme="red"
+                        onClick={() => handleDelete(club.clubId)}
+                      >
+                        Delete
+                      </Button>
+                    ) : (
+                      <></>
+                    )}
                   </>
                 )}
             </Card>
@@ -103,9 +141,10 @@ const ClubDetails = () => {
         </>
       ) : (
         <Center mt={10}>
-        <Text as="h4">
-          Your request is sent successfully to the admin. Please wait for the conformation
-        </Text>
+          <Text as="h4">
+            Your request is sent successfully to the admin. Please wait for the
+            conformation
+          </Text>
         </Center>
       )}
     </Base>

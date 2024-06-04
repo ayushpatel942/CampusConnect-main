@@ -58,10 +58,11 @@ public class ClubController
     {
         System.out.println(clubDto.getClubEmail());
         Admin admin = new Admin();
-        admin.setClubEmail(clubDto.getClubEmail());
         admin.setClubStatus("pending");
-        adminRepo.save(admin);
         ClubDto clubDto1 = clubService.createClub(clubDto);
+        System.out.println(clubDto1.getClubId());
+        admin.setClubId(clubDto1.getClubId());
+        adminRepo.save(admin);
         return new ResponseEntity<ClubDto>(clubDto1, HttpStatus.CREATED);
     }
 
@@ -88,9 +89,9 @@ public class ClubController
     @GetMapping("/allclub")
     private ResponseEntity<List<ClubDto>> getAllCLub()
     {
-        List<ClubDto> allClubs = adminService.getClubEmails().stream()
+        List<ClubDto> allClubs = adminService.getClubIds().stream()
                 .filter(admin -> admin.getClubStatus().equals("accepted"))
-                .map(admin -> modelMapper.map(clubRepo.findClubByClubEmail(admin.getClubEmail()),ClubDto.class  ))
+                .map(admin -> modelMapper.map(clubRepo.findClubByClubId(admin.getClubId()),ClubDto.class  ))
                 .collect(Collectors.toList());
 
         return new ResponseEntity<List<ClubDto>>(allClubs,HttpStatus.OK);
@@ -108,9 +109,10 @@ public class ClubController
     @GetMapping("/{club_email}/{club_password}")
     private ResponseEntity<?> loginClub(@PathVariable("club_email") String club_email,@PathVariable("club_password") String club_password)
     {
+//        System.out.println(club_email);
         ClubDto clubDto = clubService.loginClub(club_email,club_password);
 
-        Admin admin = adminRepo.findAdminByClubEmail(clubDto.getClubEmail());
+        Admin admin = adminRepo.findAdminByClubId(clubDto.getClubId());
 
         if(admin.getClubStatus() == "pending")
         {

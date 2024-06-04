@@ -25,7 +25,7 @@ const EventRegistration = () => {
     eventTime: "",
     eventVenue: "",
     description: "",
-    eventLink: ""
+    // eventLink: ""
   });
 
   const [image, setImage] = useState({
@@ -153,7 +153,7 @@ const EventRegistration = () => {
             />
           </FormControl>
 
-          <FormControl isRequired>
+          {/* <FormControl isRequired>
             <FormLabel>Registration Link</FormLabel>
             <Input
               type="url"
@@ -163,7 +163,7 @@ const EventRegistration = () => {
               onChange={handleChange}
               required
             />
-          </FormControl>
+          </FormControl> */}
 
           <FormControl>
             <FormLabel>Event Brochure</FormLabel>
